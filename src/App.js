@@ -7,7 +7,7 @@ function App() {
 
   const [blocks, setBlocks] = useState([]);
 
-  const [color, setColor] = useState("#aabbcc");
+  const [color, setColor] = useState("#121212");
 
   const [profileImage, setProfileImage] = useState('none');
 
@@ -21,16 +21,47 @@ function App() {
 
   const [underline, setUnderline] = useState(false);
 
+  const [bio, setBio] = useState("");
+
+  const [headerImage, setHeaderImage] = useState("");
+
+  const uploadImage = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertBase64(file);
+    setHeaderImage(base64);
+    console.log(base64)
+  };
+
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   const Preview = () => {
     
     return (
       <>
-      <br></br>
-      <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',width:'100%'}}>
+      <div style={{backgroundColor:'#ccc',height:'15%', width:'100%'}}>
+
+      </div>
+      <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',width:'100%',marginTop:'-50px'}}>
         <img src='https://static-cdn.jtvnw.net/jtv_user_pictures/d14b8337-b987-4977-b312-5f54aa58ec55-profile_image-70x70.png' style={{borderRadius: profileImage === 'none' ? '0px' : profileImage === 'rounded' ? '20px' : '50%' }} width="100px" />
       </div>
       <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',width:'100%'}}>
-        <p style={{color: nameColor,fontSize:'1.' + nameSize + 'rem', fontWeight: bold ? 'bold' : 'normal', fontStyle: italics ? 'italic' : 'normal', textDecoration: underline ? 'underline' : 'none'}}>@AmericanDad</p>
+        <p style={{marginTop: '0.5rem',marginBottom: '0.5rem',color: nameColor,fontSize:'1.' + nameSize + 'rem', fontWeight: bold ? 'bold' : 'normal', fontStyle: italics ? 'italic' : 'normal', textDecoration: underline ? 'underline' : 'none'}}>@AmericanDad</p>
+      </div>
+      <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',width:'100%'}}>
+        <p style={{color: nameColor,fontSize:'0.75rem',whiteSpace:'pre-line'}}>{bio}</p>
       </div>
       </>
     )
@@ -46,10 +77,24 @@ function App() {
               <Accordion.Item eventKey="0">
                 <Accordion.Header>General Appearance</Accordion.Header>
                 <Accordion.Body>
-                  <div style={{display:'flex',alignItems:'center'}}>
-                    <p style={{margin:'0',marginRight:'5px'}}>Background Color</p>
-                    <PopoverPicker color={color} onChange={setColor} />
-                  </div>
+                  <Row style={{marginTop:'15px',display:'flex',alignItems:'center'}}>
+                    <Col md="6" style={{display:'flex',justifyContent:'center',flexDirection:'column',alignItems:'stretch'}}>
+                      <Row>
+                        <Col md="6" style={{display:'flex',justifyContent:'center',flexDirection:'column',alignItems:'center'}}>
+                          <PopoverPicker color={color} onChange={setColor} />
+                          <p style={{margin:'0'}}>Background Color</p>
+                        </Col>
+                        <Col md="6" style={{display:'flex',justifyContent:'center',flexDirection:'column',alignItems:'center'}}>
+                          <input
+                            type="file"
+                            onChange={(e) => {
+                              uploadImage(e);
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
                 </Accordion.Body>
               </Accordion.Item>
               <Accordion.Item eventKey="1">
@@ -121,9 +166,53 @@ function App() {
                   </Row>
                 </Accordion.Body>
               </Accordion.Item>
+              <Accordion.Item eventKey="2">
+                <Accordion.Header>Bio</Accordion.Header>
+                <Accordion.Body>
+                  <Row style={{borderBottom:'1px solid #ccc'}}>
+                    <Col md="12">
+                      <h6>Tell Us A Little About Yourself</h6>
+                    </Col>
+                  </Row>
+                  <Row style={{marginTop:'15px'}}>
+                    <Col md="12">
+                      <Row>
+                        <Form>
+                          <Form.Group>
+                            <Form.Control as='textarea' rows={4} value={bio} onChange={(e) => setBio(e.target.value)}></Form.Control>
+                          </Form.Group>
+                        </Form>
+                      </Row>
+                    </Col>
+                  </Row>
+                </Accordion.Body>
+              </Accordion.Item>
+              <Accordion.Item eventKey="3">
+                <Accordion.Header>Socials</Accordion.Header>
+                <Accordion.Body>
+                  <Row style={{marginTop:'15px'}}>
+                    <Col md="12">
+                      <Row>
+                        <Col md="4" style={{display:'flex',justifyContent:'center',flexDirection:'column',alignItems:'center'}} onClick={() => setProfileImage('none')}>
+                          <div style={{width:'50px',height:'50px',border:'1px solid #ccc',display:'block',cursor:'pointer',backgroundColor: profileImage === 'none' ? '#ccc' : null}}></div>
+                          <p>Square</p>
+                        </Col>
+                        <Col md="4" style={{display:'flex',justifyContent:'center',flexDirection:'column',alignItems:'center'}} onClick={() => setProfileImage('rounded')}>
+                          <div style={{width:'50px',height:'50px',border:'1px solid #ccc',borderRadius:'10px',display:'block',cursor:'pointer',backgroundColor: profileImage === 'rounded' ? '#ccc' : null}}></div>
+                          <p>Rounded Corners</p>
+                        </Col>
+                        <Col md="4" style={{display:'flex',justifyContent:'center',flexDirection:'column',alignItems:'center'}} onClick={() => setProfileImage('circle')}>
+                          <div style={{width:'50px',height:'50px',border:'1px solid #ccc',borderRadius:'50%',display:'block',cursor:'pointer',backgroundColor: profileImage === 'circle' ? '#ccc' : null}}></div>
+                          <p>Circle</p>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                </Accordion.Body>
+              </Accordion.Item>
             </Accordion>
           </Col>
-          <Col md="4" style={{height:'700px',overflow:'auto', backgroundColor:color}}>
+          <Col md="4" style={{height:'700px',overflow:'auto', backgroundColor:color, borderRadius:'20px', padding:'0px'}}>
             <Preview />
           </Col>
         </Row>
